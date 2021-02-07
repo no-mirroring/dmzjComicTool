@@ -9,29 +9,31 @@ import java.nio.file.Paths;
 import java.util.*;
 
 public class Main {
-    public static final int perHua = 7;//每三话合成一卷
+    public static int perHua = 5;//每三话合成一卷
 
-    public static String comicName = "Name";
+    public static String comicName = "Name";//漫画名
 
     public static String workSpacePath = "F:\\comic\\";//默认目录
 
-    public static void main(String[] args) throws IOException {
+    public static int hua=0;//漫画话数
 
+    public static void main(String[] args) throws IOException {
+        //文件夹选择
         init();
 
         //获取zip
-        List<File> comicList = new ArrayList<>();
-        comicList = getList(new File(workSpacePath));
+        List<File> comicList = getList(new File(workSpacePath));
 
-        //zip解压后的文件夹
-        List<File> dirList = new ArrayList<>();
-        unzipFiles(comicList, dirList);
+        //zip解压
+        unzipFiles(comicList);
 
-        //Collections.sort(dirList);//排序
         //遍历文件夹
-        domain(dirList);
+        domain(new File(workSpacePath));
     }
 
+    /**
+     * 文件夹选择器
+     */
     private static void init() {
         JFileChooser jFileChooser = new JFileChooser("F:\\comic\\");
         jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -46,10 +48,14 @@ public class Main {
 
     }
 
-
-    private static void domain(List<File> dirList) throws IOException {
+    /**
+     * 把漫画分卷
+     * @param dirS 这个文件夹内应该包括N个子文件夹，每一个字文件夹代表一话（其中为jpg文件）
+     * @throws IOException
+     */
+    private static void domain(File dirS) throws IOException {
         int num = 0;//图片移动次数,用来命名图片
-        int dirSize = dirList.size();//漫画话数
+        /*int dirSize = Hua;//漫画话数*/
         int cishu = 1;//当前执行的话数，记录话数
 
         //这两个变量用来创建卷
@@ -57,22 +63,26 @@ public class Main {
         int vol = 1;
 
         //存放结果的目标dir
-        File desDir = new File(workSpacePath + comicName + "第" + vol + "卷");
+        File desDir = new File(new File(workSpacePath).getParent() + "\\"+comicName + "第" + vol + "卷");
         desDir.mkdirs();
 
         //开始操作每一话
-        for (int i = 0; i < dirSize; i++) {
+        for (int i = 0; i < hua; i++) {
 
             //分割卷
             if (a == perHua) {
                 a = 0;
                 num = 0;
                 vol++;
-                desDir = new File(workSpacePath + comicName + "第" + vol + "卷");
+                desDir = new File(new File(workSpacePath).getParent() +"\\"+ comicName + "第" + vol + "卷");
                 desDir.mkdirs();
             }
 
-            List<File> dirs = Arrays.asList(dirList.get(i).listFiles());//所有文件夹
+            List<File> dirs = getList(dirS);//所有文件夹
+
+            //按名字排序
+            Collections.sort(dirs);
+
             File dir = dirs.get(i);//一个文件夹,即当前话
 
             //移动一个文件夹里图片
@@ -111,14 +121,12 @@ public class Main {
      * 解压文件集
      *
      * @param fileList
-     * @param desDirList
      */
-    public static void unzipFiles(List<File> fileList, List<File> desDirList) {
+    public static void unzipFiles(List<File> fileList) {
         for (File f :
                 fileList) {
             ZipUtil.explode(f);
-            //zip已经变为dir,重新遍历
-            desDirList.add(new File(f.getParent()));
+            hua++;
         }
     }
 }
