@@ -1,31 +1,51 @@
 import org.apache.commons.io.FileUtils;
 import org.zeroturnaround.zip.ZipUtil;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class Main {
-    public static final int perHua = 3;//每三话合成一卷
+    public static final int perHua = 7;//每三话合成一卷
 
-    public static String comicName = "漫画名";
+    public static String comicName = "Name";
 
-    public static String workSpacePath = "F:\\comic\\";//根目录
-    public static String zipSpacePath = workSpacePath + "comicSource\\";//存放zip的目录
+    public static String workSpacePath = "F:\\comic\\";//默认目录
 
     public static void main(String[] args) throws IOException {
+
+        init();
+
         //获取zip
         List<File> comicList = new ArrayList<>();
-        comicList = getList(new File(zipSpacePath));
+        comicList = getList(new File(workSpacePath));
 
         //zip解压后的文件夹
         List<File> dirList = new ArrayList<>();
         unzipFiles(comicList, dirList);
 
-        Collections.sort(dirList);//排序
+        //Collections.sort(dirList);//排序
         //遍历文件夹
         domain(dirList);
     }
+
+    private static void init() {
+        JFileChooser jFileChooser = new JFileChooser("F:\\comic\\");
+        jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        int result = jFileChooser.showOpenDialog(null);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            comicName = jFileChooser.getSelectedFile().getName();
+            System.out.println("选择了" + comicName);
+            workSpacePath = jFileChooser.getSelectedFile().getAbsolutePath();
+        } else {
+            System.exit(0);
+        }
+
+    }
+
 
     private static void domain(List<File> dirList) throws IOException {
         int num = 0;//图片移动次数,用来命名图片
@@ -39,8 +59,6 @@ public class Main {
         //存放结果的目标dir
         File desDir = new File(workSpacePath + comicName + "第" + vol + "卷");
         desDir.mkdirs();
-
-
 
         //开始操作每一话
         for (int i = 0; i < dirSize; i++) {
@@ -73,8 +91,7 @@ public class Main {
             cishu++;
         }
 
-        FileUtils.deleteDirectory(new File(zipSpacePath));
-        FileUtils.forceMkdir(new File(zipSpacePath));
+        FileUtils.deleteDirectory(new File(workSpacePath));
         System.out.println("!!!!!!全部完成");
     }
 
