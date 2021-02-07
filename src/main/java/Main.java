@@ -22,6 +22,7 @@ public class Main {
         List<File> dirList = new ArrayList<>();
         unzipFiles(comicList, dirList);
 
+        Collections.sort(dirList);//排序
         //遍历文件夹
         domain(dirList);
     }
