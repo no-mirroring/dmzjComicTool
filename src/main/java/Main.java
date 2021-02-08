@@ -4,8 +4,6 @@ import org.zeroturnaround.zip.ZipUtil;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 
 public class Main {
@@ -81,13 +79,13 @@ public class Main {
             List<File> dirs = getList(dirS);//所有文件夹
 
             //按名字排序
-            Collections.sort(dirs);
-
+            sortDir(dirs);
             File dir = dirs.get(i);//一个文件夹,即当前话
 
             //移动一个文件夹里图片
             for (int j = 0; j < dirs.size(); j++) {
                 List<File> picList = getList(dir);//一个文件夹所有图片
+                sortImageFile(picList);//排序
                 for (int k = 0; k < picList.size(); k++) {
                     File pic = picList.get(k);//一个图片
                     FileUtils.moveFile(pic, new File(desDir.getAbsolutePath() + "\\" + num + ".jpg"));
@@ -128,5 +126,33 @@ public class Main {
             ZipUtil.explode(f);
             hua++;
         }
+    }
+
+    /**
+     * 排序xxx_xxx.zip
+     * @param fileList
+     */
+    public static void sortDir(List<File> fileList) {
+        fileList.sort((o1, o2) -> {
+            String s1 = o1.getName();
+            String s2 = o2.getName();
+            String s11 = s1.substring(s1.indexOf("_") + 1, s1.indexOf("."));
+            String s22 = s2.substring(s2.indexOf("_") + 1, s2.indexOf("."));
+            int i1 = Integer.parseInt(s11);
+            int i2 = Integer.parseInt(s22);
+            return i1 - i2;
+        });
+    }
+
+    /**
+     * 给图片文件排序
+     * @param fileList
+     */
+    public static void sortImageFile(List<File> fileList) {
+        fileList.sort((o1, o2) -> {
+            String s1 = o1.getName().substring(0, o1.getName().indexOf("."));
+            String s2 = o2.getName().substring(0, o2.getName().indexOf("."));
+            return Integer.parseInt(s1)-Integer.parseInt(s2);
+        });
     }
 }
