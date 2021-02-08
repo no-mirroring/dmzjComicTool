@@ -6,6 +6,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+/***
+ * 注意：
+ * 1.被选择的文件夹名即为漫画名
+ * 2.文件夹内应该是xxx_xxx.zip文件（动漫之家漫画下载的文件就是这个格式）
+ * 3.每一个zip就是一话
+ * 4.生成结果保存在目标文夹同的同级文件夹
+ */
 public class Main {
     public static int perHua = 5;//每三话合成一卷
 
@@ -49,7 +56,7 @@ public class Main {
     /**
      * 把漫画分卷
      * @param dirS 这个文件夹内应该包括N个子文件夹，每一个字文件夹代表一话（其中为jpg文件）
-     * @throws IOException
+     * @throws IOException err
      */
     private static void domain(File dirS) throws IOException {
         int num = 0;//图片移动次数,用来命名图片
@@ -86,8 +93,8 @@ public class Main {
             for (int j = 0; j < dirs.size(); j++) {
                 List<File> picList = getList(dir);//一个文件夹所有图片
                 sortImageFile(picList);//排序
-                for (int k = 0; k < picList.size(); k++) {
-                    File pic = picList.get(k);//一个图片
+                //一个图片
+                for (File pic : picList) {
                     FileUtils.moveFile(pic, new File(desDir.getAbsolutePath() + "\\" + num + ".jpg"));
                     System.out.println("正在移动图片" + num);
                     num++;
@@ -106,8 +113,8 @@ public class Main {
     /**
      * 将目录内文件转为list
      *
-     * @param dir
-     * @return
+     * @param dir dir
+     * @return fileList
      */
     public static List<File> getList(File dir) {
         List<File> fileList = new ArrayList<>();
@@ -118,7 +125,7 @@ public class Main {
     /**
      * 解压文件集
      *
-     * @param fileList
+     * @param fileList fileList
      */
     public static void unzipFiles(List<File> fileList) {
         for (File f :
@@ -130,7 +137,7 @@ public class Main {
 
     /**
      * 排序xxx_xxx.zip
-     * @param fileList
+     * @param fileList fileList
      */
     public static void sortDir(List<File> fileList) {
         fileList.sort((o1, o2) -> {
@@ -146,7 +153,7 @@ public class Main {
 
     /**
      * 给图片文件排序
-     * @param fileList
+     * @param fileList fileList
      */
     public static void sortImageFile(List<File> fileList) {
         fileList.sort((o1, o2) -> {
