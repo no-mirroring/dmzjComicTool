@@ -4,7 +4,10 @@ import org.zeroturnaround.zip.ZipUtil;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 /***
  * 注意：
@@ -14,7 +17,7 @@ import java.util.*;
  * 4.生成结果保存在目标文夹同的同级文件夹
  */
 public class Main {
-    public static int perHua = 5;//每三话合成一卷
+    public static int perHua = 5;//每5话合成一卷
 
     public static String comicName = "Name";//漫画名
 
@@ -63,7 +66,7 @@ public class Main {
         /*int dirSize = Hua;//漫画话数*/
         int cishu = 1;//当前执行的话数，记录话数
 
-        //这两个变量用来创建卷
+        //这两个变量用来分割卷
         int a = 0;
         int vol = 1;
 
@@ -93,19 +96,19 @@ public class Main {
             for (int j = 0; j < dirs.size(); j++) {
                 List<File> picList = getList(dir);//一个文件夹所有图片
                 sortImageFile(picList);//排序
+
                 //一个图片
                 for (File pic : picList) {
-                    FileUtils.moveFile(pic, new File(desDir.getAbsolutePath() + "\\" + num + ".jpg"));
+                    File newPic = new File(desDir.getAbsolutePath() + "\\" + num + ".jpg");
+                    FileUtils.moveFile(pic, newPic);
                     System.out.println("正在移动图片" + num);
                     num++;
                 }
             }
-
             System.out.println("------第" + cishu + "话移动完成了");
             a++;
             cishu++;
         }
-
         FileUtils.deleteDirectory(new File(workSpacePath));
         System.out.println("!!!!!!全部完成");
     }
